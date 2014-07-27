@@ -5,7 +5,10 @@
   "description": "An api for retrieving Citybik.es data via the V2 API",
   "dependencies": {
     "request": "~2.39.0",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "cors": "~2.4.1",
+    "express": "~4.7.1",
+    "response-time": "~2.0.0"
   },
   "scripts": {
     "start": "node server.js"
