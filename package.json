@@ -1,0 +1,17 @@
+{
+  "name": "citybike-js",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An api for retrieving Citybik.es data via the V2 API",
+  "dependencies": {
+    "request": "~2.39.0",
+    "lodash": "~2.4.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "sever.js",
+  "repository": "http://github.com/nixta/citybike-js.git",
+  "author": "Nick Furness",
+  "license": "Apache"
+}
