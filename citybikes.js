@@ -59,10 +59,10 @@ exports.networks = function(callback) {
   }
 
   function processOutput(output) {
-    return _.mapValues(_.cloneDeep(output.data), function(n) { 
+    return _.values(_.mapValues(_.cloneDeep(output.data), function(n) { 
       n.properties = _.omit(n.properties, ['id', 'href']); 
       return n; 
-    });
+    }));
   }
 }
 

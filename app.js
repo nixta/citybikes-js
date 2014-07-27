@@ -3,6 +3,7 @@ var d = new Date();
 
 c.networks(function(e,r) {
   var dDone = new Date();
+  console.log(r);
   console.log('Time to get Networks: ' + (dDone - d));
 
   c.network('citi-bike-nyc', function(e1,r1) {
