@@ -13,8 +13,11 @@ var useCaching = true,
 clearCaches();
 
 function geoJSONify(item) {
+  var geomSource = item.hasOwnProperty('location')?item.location:item,
+      lat = geomSource.latitude,
+      lon = geomSource.longitude;
   return { "type": "Feature",
-           "geometry": { "type": "Point", "coordinates": [item.longitude, item.latitude]},
+           "geometry": { "type": "Point", "coordinates": [lon, lat]},
            "properties": _.omit(item, ['latitude', 'longitude', 'id']),
            "id": item.id };
 }

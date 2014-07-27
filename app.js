@@ -1,11 +1,8 @@
 var c = require('./citybikes.js');
-var n = null;
 var d = new Date();
 
 c.networks(function(e,r) {
-  n = r;
   var dDone = new Date();
-  // console.log(n);
   console.log('Time to get Networks: ' + (dDone - d));
 
   c.network('citi-bike-nyc', function(e1,r1) {
