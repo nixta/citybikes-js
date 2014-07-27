@@ -5,8 +5,8 @@ var baseURL = 'http://api.citybik.es',
     networksURL = baseURL + '/v2/networks',
     networkURLBase = networksURL + '/';
 
-var networksCache, 
-    stationsCache,
+var useCaching = true,
+    networksCache, stationsCache,
     cacheValidityPeriodForNetworks = 60*60*1000, // 60 minutes for network lists
     cacheValidityPeriodForStations = 1*60*1000; // 1 minute for stations
 
@@ -31,7 +31,7 @@ function clearCaches() {
 }
 
 function isCacheInvalid(cache) {
-  return _.size(cache.data) == 0 || new Date() >= cache.cacheExpiration;
+  return (!useCaching) || _.size(cache.data) == 0 || new Date() >= cache.cacheExpiration;
 }
 
 exports.clearCaches = function() {
@@ -74,13 +74,9 @@ exports.network = function(networkName, callback) {
 
   // We didn't have a valid cache to return.
   // Get a URL for the network, but read it from the networks list if possible.
-  var networkURL = '';
-  if (networksCache.data.hasOwnProperty(networkName)) {
-    var networkEntry = networksCache.data[networkName];
-    networkURL = baseURL + networkEntry.properties.href;
-  } else {
-     networkURL = networkURLBase + networkName;
-  }
+  var networkURL = networksCache.data.hasOwnProperty(networkName) ?
+                    baseURL + networksCache.data[networkName].properties.href : 
+                    networkURLBase + networkName;
 
   // Get the actual network data then.
   request(networkURL, function(error, response, body) {
