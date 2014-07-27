@@ -12,16 +12,7 @@ var useCaching = true,
 
 clearCaches();
 
-function geoJSONify(item) {
-  var geomSource = item.hasOwnProperty('location')?item.location:item,
-      lat = geomSource.latitude,
-      lon = geomSource.longitude;
-  return { "type": "Feature",
-           "geometry": { "type": "Point", "coordinates": [lon, lat]},
-           "properties": _.omit(item, ['latitude', 'longitude', 'id']),
-           "id": item.id };
-}
-
+// Private functions
 function clearCaches() {
     networksCache = {
       data: {},
@@ -37,6 +28,15 @@ function isCacheInvalid(cache) {
   return (!useCaching) || _.size(cache.data) == 0 || new Date() >= cache.cacheExpiration;
 }
 
+function geoJSONify(item) {
+  var gSrc = item.hasOwnProperty('location')?item.location:item;
+  return { "type": "Feature",
+           "geometry": { "type": "Point", "coordinates": [gSrc.longitude, gSrc.latitude]},
+           "properties": _.omit(item, ['latitude', 'longitude', 'id']),
+           "id": item.id };
+}
+
+// API Functions
 exports.clearCaches = function() {
   clearCaches();
 }
