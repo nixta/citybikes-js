@@ -25,15 +25,28 @@ function clearCaches() {
 }
 
 function isCacheInvalid(cache) {
-  return (!useCaching) || _.size(cache.data) == 0 || new Date() >= cache.cacheExpiration;
+  return (!useCaching) || _.size(cache.data) == 0 || _.now() >= cache.cacheExpiration;
 }
 
 function geoJSONify(item) {
-  var gSrc = item.hasOwnProperty('location')?item.location:item;
+  var workItem = item;
+  // Flatten the Citybik.es output if necessary
+  if (workItem.hasOwnProperty('location')) {
+    _.merge(workItem, workItem.location)
+    delete workItem.location;
+  }
+  if (workItem.hasOwnProperty('extra')) {
+    _.merge(workItem, workItem.extra)
+    delete workItem.extra;
+  }
+  if (_.isArray(workItem.company)) {
+    workItem.company = _.reduce(workItem.company, function(s,c) { return s + ',' + c});
+  }
+  // var gSrc = item.hasOwnProperty('location')?item.location:item;
   return { "type": "Feature",
-           "geometry": { "type": "Point", "coordinates": [gSrc.longitude, gSrc.latitude]},
-           "properties": _.omit(item, ['latitude', 'longitude', 'id']),
-           "id": item.id };
+           "geometry": { "type": "Point", "coordinates": [workItem.longitude, workItem.latitude]},
+           "properties": _.omit(workItem, ['latitude', 'longitude', 'id']),
+           "id": workItem.id };
 }
 
 // API Functions
@@ -47,7 +60,7 @@ exports.networks = function(callback) {
       if (!error && response.statusCode == 200) {
         networksCache = {
           data: _.indexBy(_.map(JSON.parse(body).networks, geoJSONify), 'id'),
-          cacheExpiration: new Date((new Date()).getTime() + cacheValidityPeriodForNetworks)
+          cacheExpiration: new Date(_.now() + cacheValidityPeriodForNetworks)
         };
         return callback(null, processOutput(networksCache));
       } else {
@@ -66,7 +79,7 @@ exports.networks = function(callback) {
   }
 }
 
-exports.network = function(networkName, callback) {
+exports.stations = function(networkName, callback) {
   // Return the cache if present and valid.
   if (stationsCache.hasOwnProperty(networkName)) {
     var cacheEntry = stationsCache[networkName];
@@ -87,7 +100,7 @@ exports.network = function(networkName, callback) {
       var j = JSON.parse(body);
       stationsCache[networkName] = {
         data: j.network,
-        cacheExpiration: new Date((new Date()).getTime() + cacheValidityPeriodForStations)
+        cacheExpiration: new Date(_.now() + cacheValidityPeriodForStations)
       };
       return callback(null, processOutput(stationsCache[networkName]));
     } else {
